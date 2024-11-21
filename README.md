@@ -17,22 +17,27 @@ To run this project locally for development purposes, follow these steps:
 1.Clone the repository to your local machine:
 git clone https://github.com/SumeetShinde1108/Quiz-Application.git
 
-
+```bash
 2.Navigate to the project directory:
 cd quiz-app-django
 
+```bash
 3.Install dependencies:
 pip install -r requirements.txt
 
+```bash
 4.Run migrations:
 python manage.py migrate
 
+```bash
 5.Create a superuser for admin access:
 python manage.py createsuperuser
 
+```bash
 6.Start the development server:
 python manage.py runserver
 
+```bash
 7.Open your web browser and explore the project locally at http://localhost:8000/.
 
 
