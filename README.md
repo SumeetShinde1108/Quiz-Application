@@ -49,7 +49,6 @@ python manage.py test quiz_app.tests
 python manage.py runserver
 ```
 
-8. Open your web browser and explore the project locally at http://localhost:8000/.
 
 
 
