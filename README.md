@@ -14,41 +14,37 @@ Welcome to the Quiz Application! This Django-based quiz platform allows users to
 To run this project locally for development purposes, follow these steps:
 
 
-1.Clone the repository to your local machine:
+1. Clone the repository to your local machine:
 ```shell
 git clone https://github.com/SumeetShinde1108/Quiz-Application.git
 ```
 
-2.Navigate to the project directory:
+2. Navigate to the project directory:
 ```shell
 cd quiz-app-django
 ```
 
-
-3.Install dependencies:
+3. Install dependencies:
 ```shell
 pip install -r requirements.txt
 ```
 
-
-4.Run migrations:
+4. Run migrations:
 ```shell
 python manage.py migrate
 ```
 
-
-5.Create a superuser for admin access:
+5. Create a superuser for admin access:
 ```shell
 python manage.py createsuperuser
 ```
 
-
-6.Start the development server:
+6. Start the development server:
 ```shell
 python manage.py runserver
 ```
 
-7.Open your web browser and explore the project locally at http://localhost:8000/.
+7. Open your web browser and explore the project locally at http://localhost:8000/.
 
 
 
