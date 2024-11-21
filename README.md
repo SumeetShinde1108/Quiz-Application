@@ -14,7 +14,7 @@ Welcome to the Quiz Application! This Django-based quiz platform allows users to
 To run this project locally for development purposes, follow these steps:
 
 1.Clone the repository to your local machine:
-git clone https://github.com/rajatrawal/quiz-app-django.git
+git clone https://github.com/SumeetShinde1108/Quiz-Application.git
 
 2.Navigate to the project directory:
 cd quiz-app-django
