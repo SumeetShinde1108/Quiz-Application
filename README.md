@@ -21,7 +21,7 @@ git clone https://github.com/SumeetShinde1108/Quiz-Application.git
 
 2. Navigate to the project directory:
 ```shell
-cd quiz-app-django
+cd quiz_app
 ```
 
 3. Install dependencies:
@@ -39,12 +39,17 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-6. Start the development server:
+6. To run all tests :
+```shell
+python manage.py test quiz_app.tests
+```
+
+7. Start the development server:
 ```shell
 python manage.py runserver
 ```
 
-7. Open your web browser and explore the project locally at http://localhost:8000/.
+8. Open your web browser and explore the project locally at http://localhost:8000/.
 
 
 
