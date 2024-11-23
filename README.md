@@ -39,7 +39,7 @@ Quiz-Application/
 ├── requirements.txt
 ├── README.md
 
-##Database Models
+## Database models
 1.Quiz
 Represents a quiz created by a user.
 Fields: creator, title, description, start_time, end_time, is_active.
@@ -63,7 +63,7 @@ Represents a user's answer to a specific question in a quiz attempt.
 Fields: attempt, question, selected_choice, is_correct.
 Automatically determines if the selected choice is correct.
 
-##Relationships
+## Relationships
 1. A Quiz has multiple Questions, and each Question has multiple Choices.
 2. A QuizAttempt links a User to a Quiz and stores their score and feedback.
 3. AttemptedAnswers connects a QuizAttempt with the user’s answers.
