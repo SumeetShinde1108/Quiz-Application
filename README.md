@@ -13,6 +13,31 @@ Welcome to the Quiz Application! This Django-based quiz platform allows users to
 # Installation
 To run this project locally for development purposes, follow these steps:
 
+## Project Structure
+Quiz-Application/
+├── Quiz/
+│   ├── __pycache__/
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py
+│   └── ...
+├── quiz_app/
+│   ├── __pycache__/
+│   ├── migrations/
+│   │   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── serializers.py
+│   ├── tests.py
+│   ├── views.py
+│   └── ...
+├── db.sqlite3
+├── manage.py
+├── requirements.txt
+├── README.md
 
 1. Clone the repository to your local machine:
 ```shell
