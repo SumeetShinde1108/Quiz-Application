@@ -1,28 +1,20 @@
 from rest_framework import serializers
-from .models import Quiz, Answer, Choice, Leaderboard, Question, QuizAttempt 
+from .models import Quiz, Answer, Choice, Question, QuizAttempt
+
 
 class ChoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Choice
-        fields = ['id', 'text', 'is_correct']  
+        fields = ['id', 'text', 'is_correct']
         read_only_fields = ['is_correct']
 
 
 class QuestionSerializer(serializers.ModelSerializer):
-    choices = ChoiceSerializer(many=True, read_only=True)  
+    choices = ChoiceSerializer(many=True, read_only=True)
 
     class Meta:
         model = Question
         fields = ['id', 'text', 'choices']
-
-
-class LeaderboardSerializer(serializers.ModelSerializer):
-    user_username = serializers.CharField(source='user.username', read_only=True) 
-    quiz_title = serializers.CharField(source='quiz.title', read_only=True)  
-
-    class Meta:
-        model = Leaderboard
-        fields = ['id', 'quiz', 'quiz_title', 'user', 'user_username', 'score', 'rank']
 
 
 class QuizAttemptSerializer(serializers.ModelSerializer):
@@ -32,7 +24,10 @@ class QuizAttemptSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = QuizAttempt
-        fields = ['id', 'user', 'user_username', 'quiz_name','start_time', 'end_time', 'answers']
+        fields = [
+            'id', 'user', 'user_username', 'quiz_name',
+            'start_time', 'end_time', 'answers'
+        ]
 
     def get_answers(self, obj):
         answers = obj.answers.all()
@@ -52,16 +47,15 @@ class QuizAttemptSerializer(serializers.ModelSerializer):
 
 
 class QuizDetailSerializer(serializers.ModelSerializer):
-    creator_username = serializers.CharField(source='creator.username', read_only=True) 
-    questions = QuestionSerializer(many=True, read_only=True) 
-    leaderboard = serializers.SerializerMethodField()  
-    attempts = QuizAttemptSerializer(many=True, read_only=True)  
+    creator_username = serializers.CharField(source='creator.username', read_only=True)
+    questions = QuestionSerializer(many=True, read_only=True)
+    leaderboard = serializers.SerializerMethodField()
+    attempts = QuizAttemptSerializer(many=True, read_only=True)
 
-    
     class Meta:
         model = Quiz
         fields = [
-            'id', 'title', 'description', 'creator_username', 'start_time', 'end_time', 
+            'id', 'title', 'description', 'creator_username', 'start_time', 'end_time',
             'is_active', 'questions', 'leaderboard', 'attempts'
         ]
 
@@ -82,19 +76,22 @@ class QuizCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Quiz
-        fields = ['id', 'title', 'description', 'start_time', 'end_time', 'is_active', 'questions']
+        fields = [
+            'id', 'title', 'description', 'start_time', 'end_time',
+            'is_active', 'questions'
+        ]
 
     def create(self, validated_data):
         questions_data = validated_data.pop('questions')
         request = self.context.get('request')
-        
+
         if request and hasattr(request, 'user'):
             validated_data['creator'] = request.user
-        
+
         quiz = Quiz.objects.create(**validated_data)
-        
+
         for question_data in questions_data:
             question_data['quiz'] = quiz
             QuestionSerializer().create(question_data)
-        
+
         return quiz

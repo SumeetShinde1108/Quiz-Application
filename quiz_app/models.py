@@ -1,14 +1,14 @@
-from django.db import models
+from datetime import datetime
 from django.contrib.auth.models import User
+from django.db import models
 from django.db.models import Sum
 from django.utils.timezone import now, make_aware
-from datetime import datetime
 
 
 class Quiz(models.Model):
     creator = models.ForeignKey(
-        User, 
-        on_delete=models.CASCADE, 
+        User,
+        on_delete=models.CASCADE,
         related_name="created_quizzes"
     )
     title = models.CharField(max_length=200)
@@ -40,8 +40,8 @@ class Quiz(models.Model):
 
 class Question(models.Model):
     quiz = models.ForeignKey(
-        Quiz, 
-        on_delete=models.CASCADE, 
+        Quiz,
+        on_delete=models.CASCADE,
         related_name="questions"
     )
     text = models.CharField(max_length=500)
@@ -57,8 +57,8 @@ class Question(models.Model):
 
 class Choice(models.Model):
     question = models.ForeignKey(
-        Question, 
-        on_delete=models.CASCADE, 
+        Question,
+        on_delete=models.CASCADE,
         related_name="choices"
     )
     text = models.CharField(max_length=200)
@@ -75,13 +75,13 @@ class Choice(models.Model):
 
 class QuizAttempt(models.Model):
     user = models.ForeignKey(
-        User, 
-        on_delete=models.CASCADE, 
+        User,
+        on_delete=models.CASCADE,
         related_name="quiz_attempts"
     )
     quiz = models.ForeignKey(
-        Quiz, 
-        on_delete=models.CASCADE, 
+        Quiz,
+        on_delete=models.CASCADE,
         related_name="attempts"
     )
     start_time = models.DateTimeField(auto_now_add=True)
@@ -102,10 +102,10 @@ class QuizAttempt(models.Model):
         ]
 
 
-class Answer(models.Model):
+class AttemptedAnswers(models.Model):
     attempt = models.ForeignKey(
-        QuizAttempt, 
-        on_delete=models.CASCADE, 
+        QuizAttempt,
+        on_delete=models.CASCADE,
         related_name="answers"
     )
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
@@ -125,50 +125,3 @@ class Answer(models.Model):
         ordering = ['id']
 
 
-class Leaderboard(models.Model):
-    quiz = models.ForeignKey(
-        Quiz, 
-        on_delete=models.CASCADE, 
-        related_name="leaderboard"
-    )
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    score = models.DecimalField(max_digits=5, decimal_places=2)
-    rank = models.PositiveIntegerField(null=True, blank=True)
-
-    def __str__(self):
-        return f"Leaderboard Entry: {self.user.username} (Quiz: {self.quiz.title}, Rank: {self.rank})"
-
-    def save(self, *args, **kwargs):
-        if not kwargs.pop('skip_rank_update', False):
-            super().save(*args, **kwargs)
-            self.update_ranks()
-        else:
-            super().save(*args, **kwargs)
-
-    def update_ranks(self):
-        leaderboard_entries = Leaderboard.objects.filter(
-            quiz=self.quiz
-        ).order_by('-score', 'id')
-
-        previous_score = None
-        rank = 0
-
-        for index, entry in enumerate(leaderboard_entries, start=1):
-            if entry.score != previous_score:
-                rank = index
-
-            if entry.rank != rank:
-                entry.rank = rank
-                entry.save(skip_rank_update=True)
-
-            previous_score = entry.score
-
-    class Meta:
-        unique_together = ('quiz', 'user')
-        ordering = ['rank']
-        verbose_name = "Leaderboard Entry"
-        verbose_name_plural = "Leaderboard Entries"
-        indexes = [
-            models.Index(fields=['quiz']),
-            models.Index(fields=['rank']),
-        ]
