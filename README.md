@@ -39,6 +39,35 @@ Quiz-Application/
 ├── requirements.txt
 ├── README.md
 
+##Database Models
+1.Quiz
+Represents a quiz created by a user.
+Fields: creator, title, description, start_time, end_time, is_active.
+Automatically updates the is_active field based on the end_time.
+
+2.Question
+Represents a question in a quiz.
+Fields: quiz, text.
+
+3.Choice
+Represents a possible answer for a question.
+Fields: question, text, is_correct, points.
+
+4.QuizAttempt
+Represents a user's attempt to complete a quiz.
+Fields: user, quiz, start_time, end_time, score, feedback.
+Ensures a user can only attempt a quiz once.
+
+5.AttemptedAnswers
+Represents a user's answer to a specific question in a quiz attempt.
+Fields: attempt, question, selected_choice, is_correct.
+Automatically determines if the selected choice is correct.
+
+##Relationships
+1. A Quiz has multiple Questions, and each Question has multiple Choices.
+2. A QuizAttempt links a User to a Quiz and stores their score and feedback.
+3. AttemptedAnswers connects a QuizAttempt with the user’s answers.
+
 1. Clone the repository to your local machine:
 ```shell
 git clone https://github.com/SumeetShinde1108/Quiz-Application.git
