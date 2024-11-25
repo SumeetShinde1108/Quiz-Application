@@ -125,5 +125,6 @@ class QuizAttemptCreateSerializer(serializers.ModelSerializer):
                 selected_choice_id=answer_data['selected_choice']
             )
 
+       
         quiz_attempt.calculate_score()
         return quiz_attempt
