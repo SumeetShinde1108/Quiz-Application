@@ -16,7 +16,6 @@ urlpatterns = [
     path('verifytoken/', TokenVerifyView.as_view(), name='token_verify', ),
     
     path('api/quiz/<int:pk>/', views.QuizDetailView.as_view(), name='quiz-detail', ),
-    path('api/quiz/<int:quiz_id>/leaderboard/', views.LeaderboardView.as_view(), name='quiz-leaderboard', ),
     path('api/quiz/<int:quiz_id>/attempt/', views.QuizAttemptListView.as_view(), name='quiz-attempt', ),
     path('api/quiz/create/', views.QuizCreateView.as_view(), name='quiz-create', ),
 
