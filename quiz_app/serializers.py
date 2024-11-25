@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Quiz, Choice, Question, QuizAttempt, AttemptedAnswers
+from .models import Quiz, Question, Choice, QuizAttempt, AttemptedAnswers
 
 
 class ChoiceSerializer(serializers.ModelSerializer):
@@ -17,58 +17,32 @@ class QuestionSerializer(serializers.ModelSerializer):
         fields = ['id', 'text', 'choices']
 
 
+class AttemptedAnswerSerializer(serializers.ModelSerializer):
+    question_text = serializers.CharField(source='question.text', read_only=True)
+    selected_choice_text = serializers.CharField(source='selected_choice.text', read_only=True)
+
+    class Meta:
+        model = AttemptedAnswers
+        fields = ['id', 'question_text', 'selected_choice_text', 'is_correct', 'points_awarded']
+
+
 class QuizAttemptSerializer(serializers.ModelSerializer):
     user_username = serializers.CharField(source='user.username', read_only=True)
-    answers = serializers.SerializerMethodField()
-    quiz_name = serializers.CharField(source='quiz.title', read_only=True)
+    answers = AttemptedAnswerSerializer(many=True, read_only=True)
+    quiz_title = serializers.CharField(source='quiz.title', read_only=True)
 
     class Meta:
         model = QuizAttempt
-        fields = [
-            'id', 'user', 'user_username', 'quiz_name',
-            'start_time', 'end_time', 'answers'
-        ]
-
-    def get_answers(self, obj):
-        answers = obj.answers.all()
-        return [
-            {
-                "question": answer.question.text,
-                "selected_choice": answer.selected_choice.text,
-                "Answer_is": answer.is_correct,
-                "correct_answer": self.get_correct_answer(answer.question)
-            }
-            for answer in answers
-        ]
-
-    def get_correct_answer(self, question):
-        correct_choices = question.choices.filter(is_correct=True)
-        return [choice.text for choice in correct_choices] if correct_choices.exists() else None
+        fields = ['id', 'user_username', 'quiz_title', 'start_time', 'end_time', 'score', 'feedback', 'answers']
 
 
 class QuizDetailSerializer(serializers.ModelSerializer):
     creator_username = serializers.CharField(source='creator.username', read_only=True)
     questions = QuestionSerializer(many=True, read_only=True)
-    leaderboard = serializers.SerializerMethodField()
-    attempts = QuizAttemptSerializer(many=True, read_only=True)
 
     class Meta:
         model = Quiz
-        fields = [
-            'id', 'title', 'description', 'creator_username', 'start_time', 'end_time',
-            'is_active', 'questions', 'leaderboard', 'attempts'
-        ]
-
-    def get_leaderboard(self, obj):
-        leaderboard_entries = obj.leaderboard.all().order_by('rank')
-        return [
-            {
-                "user": entry.user.username,
-                "score": entry.score,
-                "rank": entry.rank
-            }
-            for entry in leaderboard_entries
-        ]
+        fields = ['id', 'title', 'description', 'creator_username', 'start_time', 'end_time', 'is_active', 'questions']
 
 
 class QuizCreateSerializer(serializers.ModelSerializer):
@@ -76,10 +50,7 @@ class QuizCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Quiz
-        fields = [
-            'id', 'title', 'description', 'start_time', 'end_time',
-            'is_active', 'questions'
-        ]
+        fields = ['id', 'title', 'description', 'start_time', 'end_time', 'is_active', 'questions']
 
     def create(self, validated_data):
         questions_data = validated_data.pop('questions')
@@ -92,19 +63,15 @@ class QuizCreateSerializer(serializers.ModelSerializer):
 
         for question_data in questions_data:
             question_data['quiz'] = quiz
-            QuestionSerializer().create(question_data)
+            Question.objects.create(**question_data)
 
         return quiz
 
 
 class QuizAttemptCreateSerializer(serializers.ModelSerializer):
     answers = serializers.ListField(
-        child=serializers.DictField(
-            child=serializers.IntegerField(),
-            help_text="Each answer must include question and selected_choice IDs."
-        ),
-        write_only=True,
-        help_text="Provide a list of answers with question and selected_choice IDs."
+        child=serializers.DictField(child=serializers.IntegerField()),
+        write_only=True
     )
 
     class Meta:
@@ -125,6 +92,5 @@ class QuizAttemptCreateSerializer(serializers.ModelSerializer):
                 selected_choice_id=answer_data['selected_choice']
             )
 
-       
         quiz_attempt.calculate_score()
         return quiz_attempt
