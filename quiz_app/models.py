@@ -63,7 +63,6 @@ class Choice(models.Model):
     )
     text = models.CharField(max_length=200)
     is_correct = models.BooleanField(default=False)
-    points = models.IntegerField(default=0, blank=True)
 
     def __str__(self):
         return f"Choice: {self.text} (Question: {self.question.text})"
@@ -86,15 +85,14 @@ class QuizAttempt(models.Model):
     )
     start_time = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField(blank=True, null=True)
-    score = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    score = models.FloatField(default=0)
     feedback = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"Attempt by {self.user.username} for Quiz: {self.quiz.title}"
 
     def calculate_score(self):
-        correct_answers = AttemptedAnswers.objects.filter(attempt=self, is_correct=True)
-        total_score = sum([answer.points for answer in correct_answers])
+        total_score = self.answers.aggregate(total=Sum('points_awarded'))['total'] or 0
         self.score = total_score
         self.save()
 
@@ -117,14 +115,23 @@ class AttemptedAnswers(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     selected_choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
     is_correct = models.BooleanField()
+    points_awarded = models.FloatField(default=0)
 
     def save(self, *args, **kwargs):
         self.is_correct = self.selected_choice.is_correct
-        
+
         if self.is_correct:
-            self.points_awarded = self.selected_choice.points
+            correct_choices = self.question.choices.filter(is_correct=True)
+            total_correct = correct_choices.count()
+
+            if total_correct > 0:
+                points_per_correct_choice = 10 / total_correct
+                self.points_awarded = points_per_correct_choice
+            else:
+                self.points_awarded = 0
         else:
             self.points_awarded = 0
+
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -134,5 +141,3 @@ class AttemptedAnswers(models.Model):
         verbose_name = "Answer"
         verbose_name_plural = "Answers"
         ordering = ['id']
-
-
