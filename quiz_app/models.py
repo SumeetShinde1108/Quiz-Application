@@ -92,6 +92,12 @@ class QuizAttempt(models.Model):
     def __str__(self):
         return f"Attempt by {self.user.username} for Quiz: {self.quiz.title}"
 
+    def calculate_score(self):
+        correct_answers = AttemptedAnswers.objects.filter(attempt=self, is_correct=True)
+        total_score = sum([answer.points for answer in correct_answers])
+        self.score = total_score
+        self.save()
+
     class Meta:
         unique_together = ('user', 'quiz')
         verbose_name = "Quiz Attempt"
@@ -114,6 +120,11 @@ class AttemptedAnswers(models.Model):
 
     def save(self, *args, **kwargs):
         self.is_correct = self.selected_choice.is_correct
+        
+        if self.is_correct:
+            self.points_awarded = self.selected_choice.points
+        else:
+            self.points_awarded = 0
         super().save(*args, **kwargs)
 
     def __str__(self):
