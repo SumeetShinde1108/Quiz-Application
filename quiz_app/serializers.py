@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Quiz, Answer, Choice, Question, QuizAttempt
+from .models import Quiz, Choice, Question, QuizAttempt, AttemptedAnswers
 
 
 class ChoiceSerializer(serializers.ModelSerializer):
@@ -42,8 +42,8 @@ class QuizAttemptSerializer(serializers.ModelSerializer):
         ]
 
     def get_correct_answer(self, question):
-        correct_choice = question.choices.filter(is_correct=True).first()
-        return correct_choice.text if correct_choice else None
+        correct_choices = question.choices.filter(is_correct=True)
+        return [choice.text for choice in correct_choices] if correct_choices.exists() else None
 
 
 class QuizDetailSerializer(serializers.ModelSerializer):
@@ -95,3 +95,36 @@ class QuizCreateSerializer(serializers.ModelSerializer):
             QuestionSerializer().create(question_data)
 
         return quiz
+
+
+class QuizAttemptCreateSerializer(serializers.ModelSerializer):
+    answers = serializers.ListField(
+        child=serializers.DictField(
+            child=serializers.IntegerField(),
+            help_text="Each answer must include question and selected_choice IDs."
+        ),
+        write_only=True,
+        help_text="Provide a list of answers with question and selected_choice IDs."
+    )
+
+    class Meta:
+        model = QuizAttempt
+        fields = ['quiz', 'answers']
+
+    def create(self, validated_data):
+        answers_data = validated_data.pop('answers')
+        request = self.context.get('request')
+        user = request.user if request and hasattr(request, 'user') else None
+
+        quiz_attempt = QuizAttempt.objects.create(user=user, **validated_data)
+
+        for answer_data in answers_data:
+            AttemptedAnswers.objects.create(
+                attempt=quiz_attempt,
+                question_id=answer_data['question'],
+                selected_choice_id=answer_data['selected_choice']
+            )
+
+       
+        quiz_attempt.calculate_score()
+        return quiz_attempt
