@@ -132,7 +132,7 @@ class AttemptedAnswers(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Answer: {self.selected_choice.text} (Correct: {self.is_correct})"
+        return f"Answer: {self.selected_choice.text} (Correct: {self.is_correct})" 
 
     class Meta:
         verbose_name = "Answer"
