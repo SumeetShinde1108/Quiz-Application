@@ -53,3 +53,4 @@ class AttemptedAnswersAdmin(admin.ModelAdmin):
     list_display = ('attempt', 'question', 'selected_choice', 'is_correct', 'points_awarded')
     list_filter = ('is_correct', 'question')
     search_fields = ('question__text', 'selected_choice__text')
+    

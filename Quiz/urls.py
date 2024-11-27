@@ -18,7 +18,7 @@ urlpatterns = [
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('auth/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 
-    path('api/', include(router.urls)), 
+    path('api/', include(router.urls)),         
 
     path('api/quiz/<int:pk>/', views.QuizDetailView.as_view(), name='quiz-detail'),
     path('api/quiz/<int:quiz_id>/attempt/', views.QuizAttemptListView.as_view(), name='quiz-attempt-list'),

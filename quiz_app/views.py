@@ -20,7 +20,7 @@ class QuizDetailView(RetrieveAPIView):
     serializer_class = QuizDetailSerializer
 
 
-class QuizAttemptListView(APIView):
+class QuizAttemptListView(APIView):    
     def get(self, request, quiz_id):
         quiz_attempts = QuizAttempt.objects.filter(
             quiz__id=quiz_id

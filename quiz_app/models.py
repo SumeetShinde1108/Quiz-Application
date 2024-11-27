@@ -80,7 +80,7 @@ class QuizAttempt(models.Model):
     )
     quiz = models.ForeignKey(
         Quiz,
-        on_delete=models.CASCADE,
+        on_delete=models.CASCADE,    
         related_name="attempts"
     )
     start_time = models.DateTimeField(auto_now_add=True)
