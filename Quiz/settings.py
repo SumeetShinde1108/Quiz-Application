@@ -15,7 +15,7 @@ from datetime import timedelta
 
 SIMPLE_JWT= {
     'ACCESS_TOKEN_LIFETIME':timedelta( minutes = 30 ),
-    'REFRESH_TOKEN_LIFETIME':timedelta ( days = 1 ),
+    'REFRESH_TOKEN_LIFETIME':timedelta ( days = 3 ),
     'ROTATE_REFRESH_TOKEN': False ,
 }
 APPEND_SLASH=False 
@@ -134,12 +134,12 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-'''REST_FRAMEWORK = {
+REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',  
     ],
-}'''
+}
 

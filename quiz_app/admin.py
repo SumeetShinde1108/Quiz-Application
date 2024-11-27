@@ -19,7 +19,7 @@ class AttemptedAnswersInline(admin.TabularInline):
 
 @admin.register(Quiz)
 class QuizAdmin(admin.ModelAdmin):
-    list_display = ('title', 'creator', 'start_time', 'end_time', 'is_active')
+    list_display = ('id', 'title', 'creator', 'start_time', 'end_time', 'is_active')
     list_filter = ('is_active', 'start_time', 'end_time')
     search_fields = ('title', 'creator__username')
     inlines = [QuestionInline]
@@ -42,7 +42,7 @@ class ChoiceAdmin(admin.ModelAdmin):
 
 @admin.register(QuizAttempt)
 class QuizAttemptAdmin(admin.ModelAdmin):
-    list_display = ('user', 'quiz', 'start_time', 'end_time', 'score')
+    list_display = ('id', 'user', 'quiz', 'start_time', 'end_time', 'score')
     list_filter = ('quiz', 'start_time', 'end_time')
     search_fields = ('user__username', 'quiz__title')
     inlines = [AttemptedAnswersInline]

@@ -119,11 +119,9 @@ class AttemptedAnswers(models.Model):
 
     def save(self, *args, **kwargs):
         self.is_correct = self.selected_choice.is_correct
-
         if self.is_correct:
             correct_choices = self.question.choices.filter(is_correct=True)
             total_correct = correct_choices.count()
-
             if total_correct > 0:
                 points_per_correct_choice = 10 / total_correct
                 self.points_awarded = points_per_correct_choice
@@ -131,7 +129,6 @@ class AttemptedAnswers(models.Model):
                 self.points_awarded = 0
         else:
             self.points_awarded = 0
-
         super().save(*args, **kwargs)
 
     def __str__(self):
