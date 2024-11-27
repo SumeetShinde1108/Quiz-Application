@@ -1,55 +1,55 @@
 from django.contrib import admin
-from quiz_app.models import Quiz, Question, Choice, QuizAttempt, AttemptedAnswers
+from .models import Quiz, Question, Choice, QuizAttempt, AttemptedAnswers
 
 
-class QuestionInline(admin.StackedInline):
+class ChoiceInline(admin.TabularInline):
+    model = Choice
+    extra = 1
+
+
+class QuestionInline(admin.TabularInline):
     model = Question
-    extra = 1  
-    show_change_link = True  
+    extra = 1
+
+
+class AttemptedAnswersInline(admin.TabularInline):
+    model = AttemptedAnswers
+    extra = 0
 
 
 @admin.register(Quiz)
 class QuizAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'creator', 'start_time', 'end_time', 'is_active')
+    list_display = ('title', 'creator', 'start_time', 'end_time', 'is_active')
     list_filter = ('is_active', 'start_time', 'end_time')
-    search_fields = ('title', 'description', 'creator__username')
+    search_fields = ('title', 'creator__username')
     inlines = [QuestionInline]
-    prepopulated_fields = {'title': ('description',)}
-    date_hierarchy = 'start_time'
 
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ('text', 'quiz')
+    search_fields = ('text',)
     list_filter = ('quiz',)
-    search_fields = ('text', 'quiz__title')
+    inlines = [ChoiceInline]
 
 
 @admin.register(Choice)
 class ChoiceAdmin(admin.ModelAdmin):
     list_display = ('text', 'question', 'is_correct')
-    list_filter = ('is_correct', 'question')
-    search_fields = ('text', 'question__text')
-
-
-class AnswerInline(admin.TabularInline):
-    model = AttemptedAnswers
-    extra = 0
-    readonly_fields = ('is_correct',)
-    show_change_link = True
+    list_filter = ('question', 'is_correct')
+    search_fields = ('text',)
 
 
 @admin.register(QuizAttempt)
 class QuizAttemptAdmin(admin.ModelAdmin):
-    list_display = ('user', 'quiz', 'start_time', 'end_time')
-    list_filter = ('quiz', 'user')
+    list_display = ('user', 'quiz', 'start_time', 'end_time', 'score')
+    list_filter = ('quiz', 'start_time', 'end_time')
     search_fields = ('user__username', 'quiz__title')
-    inlines = [AnswerInline]
-    readonly_fields = ('score', 'start_time', 'end_time')
+    inlines = [AttemptedAnswersInline]
 
 
 @admin.register(AttemptedAnswers)
-class AnswerAdmin(admin.ModelAdmin):
-    list_display = ('attempt', 'question', 'selected_choice', 'is_correct')
+class AttemptedAnswersAdmin(admin.ModelAdmin):
+    list_display = ('attempt', 'question', 'selected_choice', 'is_correct', 'points_awarded')
     list_filter = ('is_correct', 'question')
-    search_fields = ('question__text', 'attempt__user__username')
+    search_fields = ('question__text', 'selected_choice__text')

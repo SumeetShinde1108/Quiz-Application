@@ -7,7 +7,6 @@ from rest_framework_simplejwt.views import TokenObtainPairView , TokenRefreshVie
 router = DefaultRouter()
 
 urlpatterns = [
-
     path('', include(router.urls), ),
     path('admin/',admin.site.urls, ),
 
@@ -18,5 +17,4 @@ urlpatterns = [
     path('api/quiz/<int:pk>/', views.QuizDetailView.as_view(), name='quiz-detail', ),
     path('api/quiz/<int:quiz_id>/attempt/', views.QuizAttemptListView.as_view(), name='quiz-attempt', ),
     path('api/quiz/create/', views.QuizCreateView.as_view(), name='quiz-create', ),
-
 ]
