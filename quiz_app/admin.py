@@ -19,7 +19,7 @@ class AttemptedAnswersInline(admin.TabularInline):
 
 @admin.register(Quiz)
 class QuizAdmin(admin.ModelAdmin):
-    list_display = ('title', 'creator', 'start_time', 'end_time', 'is_active')
+    list_display = ('id', 'title', 'creator', 'start_time', 'end_time', 'is_active')
     list_filter = ('is_active', 'start_time', 'end_time')
     search_fields = ('title', 'creator__username')
     inlines = [QuestionInline]
@@ -35,14 +35,14 @@ class QuestionAdmin(admin.ModelAdmin):
 
 @admin.register(Choice)
 class ChoiceAdmin(admin.ModelAdmin):
-    list_display = ('text', 'question', 'is_correct')
+    list_display = ('id', 'text', 'question', 'is_correct')
     list_filter = ('question', 'is_correct')
     search_fields = ('text',)
 
 
 @admin.register(QuizAttempt)
 class QuizAttemptAdmin(admin.ModelAdmin):
-    list_display = ('user', 'quiz', 'start_time', 'end_time', 'score')
+    list_display = ('id', 'user', 'quiz', 'start_time', 'end_time', 'score')
     list_filter = ('quiz', 'start_time', 'end_time')
     search_fields = ('user__username', 'quiz__title')
     inlines = [AttemptedAnswersInline]
@@ -50,6 +50,7 @@ class QuizAttemptAdmin(admin.ModelAdmin):
 
 @admin.register(AttemptedAnswers)
 class AttemptedAnswersAdmin(admin.ModelAdmin):
-    list_display = ('attempt', 'question', 'selected_choice', 'is_correct', 'points_awarded')
+    list_display = ('id', 'attempt', 'question', 'selected_choice', 'is_correct', 'points_awarded')
     list_filter = ('is_correct', 'question')
     search_fields = ('question__text', 'selected_choice__text')
+    

@@ -15,7 +15,7 @@ from datetime import timedelta
 
 SIMPLE_JWT= {
     'ACCESS_TOKEN_LIFETIME':timedelta( minutes = 30 ),
-    'REFRESH_TOKEN_LIFETIME':timedelta ( days = 1 ),
+    'REFRESH_TOKEN_LIFETIME':timedelta ( days = 3 ),
     'ROTATE_REFRESH_TOKEN': False ,
 }
 APPEND_SLASH=False 
@@ -95,7 +95,7 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
+AUTH_PASSWORD_VALIDATORS = [   
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
@@ -133,7 +133,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+# Uncomment When Attempting/Updating/Deleting quiz attempt.
 '''REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
