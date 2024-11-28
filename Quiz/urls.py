@@ -27,5 +27,6 @@ urlpatterns = [
     
     path('api/quiz/attempt/', views.QuizAttemptCRUDView.as_view(), name='quiz-attempt-create'), 
     path('api/quiz/attempt/<int:attempt_id>/', views.QuizAttemptCRUDView.as_view(), name='quiz-attempt-crud'),  
+    path('api/quiz/<int:quiz_id>/leaderboard/', views.LeaderboardView.as_view(), name="quiz-leaderboard"),
 
 ]

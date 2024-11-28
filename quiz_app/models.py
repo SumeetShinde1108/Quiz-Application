@@ -95,7 +95,7 @@ class QuizAttempt(models.Model):
         total_score = self.answers.aggregate(total=Sum('points_awarded'))['total'] or 0
         self.score = total_score
         self.save()
-
+        
     class Meta:
         unique_together = ('user', 'quiz')
         verbose_name = "Quiz Attempt"
@@ -118,10 +118,15 @@ class AttemptedAnswers(models.Model):
     points_awarded = models.FloatField(default=0)
 
     def save(self, *args, **kwargs):
+        if not self.selected_choice:
+            raise ValueError("Selected choice cannot be null.")
+    
         self.is_correct = self.selected_choice.is_correct
+    
         if self.is_correct:
             correct_choices = self.question.choices.filter(is_correct=True)
             total_correct = correct_choices.count()
+        
             if total_correct > 0:
                 points_per_correct_choice = 10 / total_correct
                 self.points_awarded = points_per_correct_choice
@@ -129,7 +134,8 @@ class AttemptedAnswers(models.Model):
                 self.points_awarded = 0
         else:
             self.points_awarded = 0
-        super().save(*args, **kwargs)
+    
+        super().save(*args, **kwargs)  
 
     def __str__(self):
         return f"Answer: {self.selected_choice.text} (Correct: {self.is_correct})" 

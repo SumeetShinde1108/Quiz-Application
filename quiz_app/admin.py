@@ -35,7 +35,7 @@ class QuestionAdmin(admin.ModelAdmin):
 
 @admin.register(Choice)
 class ChoiceAdmin(admin.ModelAdmin):
-    list_display = ('text', 'question', 'is_correct')
+    list_display = ('id', 'text', 'question', 'is_correct')
     list_filter = ('question', 'is_correct')
     search_fields = ('text',)
 
@@ -50,7 +50,7 @@ class QuizAttemptAdmin(admin.ModelAdmin):
 
 @admin.register(AttemptedAnswers)
 class AttemptedAnswersAdmin(admin.ModelAdmin):
-    list_display = ('attempt', 'question', 'selected_choice', 'is_correct', 'points_awarded')
+    list_display = ('id', 'attempt', 'question', 'selected_choice', 'is_correct', 'points_awarded')
     list_filter = ('is_correct', 'question')
     search_fields = ('question__text', 'selected_choice__text')
     

@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.renderers import JSONRenderer
 from django.utils.timezone import now
+from django.shortcuts import get_object_or_404
 
 from .models import Quiz, QuizAttempt
 from .serializers import (
@@ -149,4 +150,26 @@ class QuizAttemptCRUDView(APIView):
         return Response(
             {"message": "Quiz attempt deleted successfully!"},
             status=status.HTTP_204_NO_CONTENT
+        )
+
+
+class LeaderboardView(APIView):
+    def get(self, request, quiz_id):
+        quiz = get_object_or_404(Quiz, id=quiz_id)
+        attempts = QuizAttempt.objects.filter(quiz=quiz).order_by('-score')
+        leaderboard = [
+            {
+                "username": attempt.user.username,
+                "score": attempt.score,
+                "rank": rank + 1
+            }
+            for rank, attempt in enumerate(attempts)
+        ]
+
+        return Response(
+            {
+                "quiz_title": quiz.title,
+                "leaderboard": leaderboard,
+            },
+            status=status.HTTP_200_OK
         )
