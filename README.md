@@ -67,7 +67,43 @@ Automatically determines if the selected choice is correct.
 1. A Quiz has multiple Questions, and each Question has multiple Choices.
 2. A QuizAttempt links a User to a Quiz and stores their score and feedback.
 3. AttemptedAnswers connects a QuizAttempt with the user’s answers.
-##
+
+# Quiz Application API
+
+This API provides endpoints for managing quizzes, attempts, and leaderboards.
+
+## API Endpoints
+
+### 1. Quiz Detail
+- **URL:** `/api/quiz/<int:pk>/`
+- **Method:** `GET`
+- **Description:** Retrieve details of a specific quiz by its ID.
+
+### 2. Quiz Attempt List
+- **URL:** `/api/quiz/<int:quiz_id>/attempt/`
+- **Method:** `GET`
+- **Description:** Fetch all attempts made for a specific quiz.
+
+### 3. Create Quiz
+- **URL:** `/api/quiz/create/`
+- **Method:** `POST`
+- **Description:** Create a new quiz.
+
+### 4. Create/Update/Delete Quiz Attempt
+- **Create Attempt:**
+  - **URL:** `/api/quiz/attempt/`
+  - **Method:** `POST`
+  - **Description:** Create a new quiz attempt.
+- **Retrieve/Update/Delete Attempt:**
+  - **URL:** `/api/quiz/attempt/<int:attempt_id>/`
+  - **Methods:** `GET`, `PUT`, `DELETE`
+  - **Description:** Manage quiz attempts.
+
+### 5. Quiz Leaderboard
+- **URL:** `/api/quiz/<int:quiz_id>/leaderboard/`
+- **Method:** `GET`
+- **Description:** View the leaderboard for a specific quiz.
+
 
 
 1. Clone the repository to your local machine:
