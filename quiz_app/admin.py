@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import Quiz, Question, Choice, QuizAttempt, AttemptedAnswers
+from quiz_app.models import (
+    Quiz, 
+    Question, 
+    Choice, 
+    QuizAttempt, 
+    AttemptedAnswers
+)
 
 
 class ChoiceInline(admin.TabularInline):

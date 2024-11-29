@@ -1,7 +1,13 @@
 from rest_framework import serializers
-from .models import Quiz, Question, Choice, QuizAttempt, AttemptedAnswers
-
-
+from quiz_app.models import (
+    Quiz, 
+    Question, 
+    Choice, 
+    QuizAttempt, 
+    AttemptedAnswers
+)
+    
+    
 class ChoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Choice
