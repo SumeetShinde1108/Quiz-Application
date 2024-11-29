@@ -119,7 +119,6 @@ class QuizAttemptCreateSerializer(serializers.ModelSerializer):
     
         return quiz_attempt
 
-    
     def update(self, instance, validated_data):
         answers_data = validated_data.pop('answers', [])
         instance.answers.all().delete()
