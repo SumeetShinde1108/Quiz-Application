@@ -1,7 +1,13 @@
 from rest_framework import serializers
-from .models import Quiz, Question, Choice, QuizAttempt, AttemptedAnswers
-
-
+from quiz_app.models import (
+    Quiz, 
+    Question, 
+    Choice, 
+    QuizAttempt, 
+    AttemptedAnswers
+)
+    
+    
 class ChoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Choice
@@ -119,7 +125,6 @@ class QuizAttemptCreateSerializer(serializers.ModelSerializer):
     
         return quiz_attempt
 
-    
     def update(self, instance, validated_data):
         answers_data = validated_data.pop('answers', [])
         instance.answers.all().delete()

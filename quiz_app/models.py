@@ -17,6 +17,14 @@ class Quiz(models.Model):
     end_time = models.DateTimeField(blank=True, null=True)
     is_active = models.BooleanField()
 
+    class Meta:
+        verbose_name = "Quiz"
+        verbose_name_plural = "Quizzes"
+        ordering = ['start_time']
+        indexes = [
+            models.Index(fields=['start_time', 'end_time']),
+        ]
+    
     def __str__(self):
         return self.title
 
@@ -29,15 +37,7 @@ class Quiz(models.Model):
             self.is_active = self.end_time > now()
         super().save(*args, **kwargs)
 
-    class Meta:
-        verbose_name = "Quiz"
-        verbose_name_plural = "Quizzes"
-        ordering = ['start_time']
-        indexes = [
-            models.Index(fields=['start_time', 'end_time']),
-        ]
-
-
+  
 class Question(models.Model):
     quiz = models.ForeignKey(
         Quiz,
@@ -46,13 +46,13 @@ class Question(models.Model):
     )
     text = models.CharField(max_length=500)
 
-    def __str__(self):
-        return f"Question: {self.text} (Quiz: {self.quiz.title})"
-
     class Meta:
         verbose_name = "Question"
         verbose_name_plural = "Questions"
         ordering = ['id']
+    
+    def __str__(self):
+        return f"Question: {self.text} (Quiz: {self.quiz.title})"
 
 
 class Choice(models.Model):
@@ -64,12 +64,12 @@ class Choice(models.Model):
     text = models.CharField(max_length=200)
     is_correct = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f"Choice: {self.text} (Question: {self.question.text})"
-
     class Meta:
         verbose_name = "Choice"
         verbose_name_plural = "Choices"
+    
+    def __str__(self):
+        return f"Choice: {self.text} (Question: {self.question.text})"
 
 
 class QuizAttempt(models.Model):
@@ -88,6 +88,12 @@ class QuizAttempt(models.Model):
     score = models.FloatField(default=0)
     feedback = models.TextField(blank=True, null=True)
 
+    class Meta:
+        unique_together = ('user', 'quiz')
+        verbose_name = "Quiz Attempt"
+        verbose_name_plural = "Quiz Attempts"
+        ordering = ['-start_time']
+    
     def __str__(self):
         return f"Attempt by {self.user.username} for Quiz: {self.quiz.title}"
 
@@ -96,15 +102,6 @@ class QuizAttempt(models.Model):
         self.score = total_score
         self.save()
         
-    class Meta:
-        unique_together = ('user', 'quiz')
-        verbose_name = "Quiz Attempt"
-        verbose_name_plural = "Quiz Attempts"
-        ordering = ['-start_time']
-        indexes = [
-            models.Index(fields=['quiz', 'user']),
-        ]
-
 
 class AttemptedAnswers(models.Model):
     attempt = models.ForeignKey(
@@ -116,6 +113,14 @@ class AttemptedAnswers(models.Model):
     selected_choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
     is_correct = models.BooleanField()
     points_awarded = models.FloatField(default=0)
+
+    class Meta:
+        verbose_name = "Answer"
+        verbose_name_plural = "Answers"
+        ordering = ['id']
+    
+    def __str__(self):
+        return f"Answer: {self.selected_choice.text} (Correct: {self.is_correct})" 
 
     def save(self, *args, **kwargs):
         if not self.selected_choice:
@@ -137,10 +142,5 @@ class AttemptedAnswers(models.Model):
     
         super().save(*args, **kwargs)  
 
-    def __str__(self):
-        return f"Answer: {self.selected_choice.text} (Correct: {self.is_correct})" 
-
-    class Meta:
-        verbose_name = "Answer"
-        verbose_name_plural = "Answers"
-        ordering = ['id']
+    
+    
