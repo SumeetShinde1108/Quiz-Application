@@ -98,6 +98,7 @@ class QuizAttemptCRUDView(APIView):
             quiz_attempt = QuizAttempt.objects.select_related('quiz', 'user').prefetch_related('answers').get(
                 id=attempt_id, user=request.user
             )
+        
         except QuizAttempt.DoesNotExist:
             return Response({"detail": "Quiz attempt not found."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -115,6 +116,7 @@ class QuizAttemptCRUDView(APIView):
         try:
             quiz_attempt = QuizAttempt.objects.get(id=attempt_id, user=request.user)
             print(f"QuizAttempt found: {quiz_attempt}")
+        
         except QuizAttempt.DoesNotExist:
             print("QuizAttempt not found or user not authorized.")
             return Response(
@@ -140,6 +142,7 @@ class QuizAttemptCRUDView(APIView):
 
         try:
             quiz_attempt = QuizAttempt.objects.get(id=attempt_id, user=request.user)
+        
         except QuizAttempt.DoesNotExist:
             return Response(
                 {"detail": "Quiz attempt not found or not authorized to delete."},

@@ -102,6 +102,24 @@ class QuizAttemptCreateSerializer(serializers.ModelSerializer):
 
         return value
 
+    def create(self, validated_data):
+        answers_data = validated_data.pop('answers', [])
+        request = self.context.get('request')
+        user = request.user if request and hasattr(request, 'user') else None
+        validated_data.pop('user', None)
+        quiz_attempt = QuizAttempt.objects.create(user=user, **validated_data)
+        
+        for answer_data in answers_data:
+            AttemptedAnswers.objects.create(
+            attempt=quiz_attempt,
+            question_id=answer_data['question'],
+            selected_choice_id=answer_data['selected_choice']
+        )
+        quiz_attempt.calculate_score()
+    
+        return quiz_attempt
+
+    
     def update(self, instance, validated_data):
         answers_data = validated_data.pop('answers', [])
         instance.answers.all().delete()
