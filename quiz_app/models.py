@@ -15,15 +15,12 @@ class Quiz(models.Model):
     description = models.TextField(blank=True, null=True)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(blank=True, null=True)
-    is_active = models.BooleanField()
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = "Quiz"
         verbose_name_plural = "Quizzes"
         ordering = ['start_time']
-        indexes = [
-            models.Index(fields=['start_time', 'end_time']),
-        ]
     
     def __str__(self):
         return self.title
