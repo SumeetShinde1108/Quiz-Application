@@ -2,7 +2,13 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 from django.test import TestCase
-from .models import Quiz, User, Question, Choice, QuizAttempt
+from quiz_app.models import (
+    Quiz, 
+    User, 
+    Question, 
+    Choice,
+    QuizAttempt
+)
 from django.utils import timezone
 
 
