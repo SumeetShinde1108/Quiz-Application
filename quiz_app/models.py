@@ -2,10 +2,8 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Sum
-from django.utils.timezone import (
-    now, 
-    make_aware
-)
+from django.utils.timezone import now, make_aware
+
 
 class Quiz(models.Model):
     creator = models.ForeignKey(
