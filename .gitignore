@@ -1,0 +1,57 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Django specific
+*.log
+*.pot
+*.pyc
+
+# Media
+media/
+
+# Environment variables
+.env
+
+# Node
+node_modules/
+
+# Virtual environments
+env/
+venv/
+
+# macOS
+.DS_Store
+
+# IDE specific files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Testing
+.coverage
+*.cover
+coverage.xml
+nosetests.xml
+*.test.db
+
+# Python package files
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Backup files
+*.bak
+*.swp
+*~
+
+# Ignore migrations if unnecessary
+migrations/
+
