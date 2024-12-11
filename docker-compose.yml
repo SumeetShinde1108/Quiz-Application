@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  django:
+    build: .
+    container_name: django_quiz_app
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=True
+    restart: always
