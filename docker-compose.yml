@@ -3,35 +3,17 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15
-    container_name: quiz-application-postgres-1
+    container_name: postgres-db
     restart: always
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydb
     ports:
       - "5432:5432"
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "admin"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    environment:
+      POSTGRES_USER: db
+      POSTGRES_PASSWORD: db
+      POSTGRES_DB: mydb
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
-  hasura:
-    image: hasura/graphql-engine:latest
-    container_name: quiz-application-hasura-1
-    restart: always
-    depends_on:
-      postgres:
-        condition: service_healthy
-    ports:
-      - "8080:8080"
-    environment:
-      HASURA_GRAPHQL_DATABASE_URL: postgres://admin:mypassword@postgres:5432/mydb
-      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
-
+  
   django:
     build:
       context: .
@@ -45,6 +27,20 @@ services:
     volumes:
       - .:/app
     command: python manage.py runserver 0.0.0.0:8000
+  
+  hasura:
+    image: hasura/graphql-engine:v2.28.0
+    container_name: hasura_graphql
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - HASURA_GRAPHQL_DATABASE_URL=postgres://db:db@postgres:5432/mydb
+      - HASURA_GRAPHQL_ENABLE_CONSOLE=true
+      - HASURA_GRAPHQL_DEV_MODE=true
+    depends_on:
+      - postgres
+    entrypoint: ["/wait-for-it.sh", "postgres:5432", "--", "graphql-engine"]
 
 volumes:
   postgres_data:

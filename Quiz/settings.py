@@ -87,13 +87,14 @@ WSGI_APPLICATION = 'Quiz.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydb',  
-        'USER': 'admin',  
-        'PASSWORD': 'mypassword',  
+        'NAME': 'mydb', 
+        'USER': 'db',  
+        'PASSWORD': 'db',  
         'HOST': 'postgres',  
-        'PORT': '5432',
+        'PORT': '5432',  
     }
 }
+
 
 
 # Password validation
