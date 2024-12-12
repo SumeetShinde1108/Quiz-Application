@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from quiz_app.models import (
     Quiz, 
     Question, 
@@ -6,6 +7,8 @@ from quiz_app.models import (
     QuizAttempt, 
     AttemptedAnswers
 )
+
+@admin.register(UserAdmin)
 
 
 class ChoiceInline(admin.TabularInline):
