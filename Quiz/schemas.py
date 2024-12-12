@@ -11,22 +11,27 @@ from quiz_app.models import (
 class QuizType(DjangoObjectType):
     class Meta:
         model = Quiz
+        fields = "__all__"
 
 class QuestionType(DjangoObjectType):
     class Meta:
         model = Question
+        fields = "__all__"
 
 class ChoiceType(DjangoObjectType):
     class Meta:
         model = Choice
+        fields = "__all__"
 
 class QuizAttemptType(DjangoObjectType):
     class Meta:
         model = QuizAttempt
+        fields = "__all__"
 
 class AttemptedAnswersType(DjangoObjectType):
     class Meta:
         model = AttemptedAnswers
+        fields = "__all__"
 
 class Query(graphene.ObjectType):
     all_quizzes = graphene.List(QuizType)
@@ -50,4 +55,18 @@ class Query(graphene.ObjectType):
     def resolve_all_answers(self, info):
         return AttemptedAnswers.objects.all()
 
-schema = graphene.Schema(query=Query)
+class CreateQuiz(graphene.Mutation):
+    class Arguments:
+        name = graphene.String(required=True)
+        description = graphene.String(required=False)
+
+    quiz = graphene.Field(QuizType)
+
+    def mutate(self, info, name, description=None):
+        quiz = Quiz.objects.create(name=name, description=description)
+        return CreateQuiz(quiz=quiz)
+
+class Mutation(graphene.ObjectType):
+    create_quiz = CreateQuiz.Field()
+
+schema = graphene.Schema(query=Query, mutation=Mutation)
