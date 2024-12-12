@@ -48,7 +48,12 @@ INSTALLED_APPS = [
     'quiz_app',
     'rest_framework',
     'rest_framework_simplejwt',
+    'graphene',
 ]
+
+GRAPHENE = {
+    "SCHEMA": "Quiz.schemas.schema",  
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
