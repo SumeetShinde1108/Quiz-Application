@@ -9,13 +9,14 @@ from rest_framework_simplejwt.views import (
 from quiz_app import views
 from graphene_django.views import GraphQLView
 from Quiz.schemas import schema
+from django.views.decorators.csrf import csrf_exempt
 
 router = DefaultRouter()
 
 urlpatterns = [
 
     path('admin/', admin.site.urls),
-    path("graphql/", GraphQLView.as_view(graphiql=False, schema=schema)),
+    path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
 
     path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
