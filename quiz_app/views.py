@@ -1,11 +1,11 @@
+from django.shortcuts import get_object_or_404
+from django.utils.timezone import now
+from rest_framework import status
 from rest_framework.generics import RetrieveAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-from rest_framework.renderers import JSONRenderer
-from django.utils.timezone import now
-from django.shortcuts import get_object_or_404
 
 from quiz_app.models import Quiz, QuizAttempt
 from quiz_app.serializers import (
