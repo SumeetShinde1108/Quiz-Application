@@ -29,26 +29,36 @@ class AttemptedAnswerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AttemptedAnswers
-        fields = ['id', 'question_text', 'selected_choice_text', 'is_correct', 'points_awarded']
+        fields = ['id', 'question_text', 'selected_choice_text',
+                  'is_correct', 'points_awarded']
 
 
 class QuizAttemptSerializer(serializers.ModelSerializer):
-    user_username = serializers.CharField(source='user.username', read_only=True)
-    answers = AttemptedAnswerSerializer(many=True, read_only=True)
-    quiz_title = serializers.CharField(source='quiz.title', read_only=True)
+    user_username = serializers.CharField(source='user.username',
+                                          read_only=True)
+    answers = AttemptedAnswerSerializer(many=True,
+                                        read_only=True)
+    quiz_title = serializers.CharField(source='quiz.title',
+                                       read_only=True)
 
     class Meta:
         model = QuizAttempt
-        fields = ['id', 'user_username', 'quiz_title', 'start_time', 'end_time', 'score', 'feedback', 'answers']
+        fields = ['id', 'user_username', 'quiz_title',
+                  'start_time', 'end_time', 'score',
+                  'feedback', 'answers']
 
 
 class QuizDetailSerializer(serializers.ModelSerializer):
-    creator_username = serializers.CharField(source='creator.username', read_only=True)
-    questions = QuestionSerializer(many=True, read_only=True)  
+    creator_username = serializers.CharField(source='creator.username',
+                                             read_only=True)
+    questions = QuestionSerializer(many=True,
+                                   read_only=True)
 
     class Meta:
         model = Quiz
-        fields = ['id', 'title', 'description', 'creator_username', 'start_time', 'end_time', 'is_active', 'questions']
+        fields = ['id', 'title', 'description',
+                  'creator_username', 'start_time', 'end_time',
+                  'is_active', 'questions']
 
 
 class QuizCreateSerializer(serializers.ModelSerializer):
@@ -56,7 +66,9 @@ class QuizCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Quiz
-        fields = ['id', 'title', 'description', 'start_time', 'end_time', 'is_active', 'questions']
+        fields = ['id', 'title', 'description',
+                  'start_time', 'end_time', 'is_active',
+                  'questions']
 
     def create(self, validated_data):
         questions_data = validated_data.pop('questions')
@@ -69,10 +81,12 @@ class QuizCreateSerializer(serializers.ModelSerializer):
 
         for question_data in questions_data:
             choices_data = question_data.pop('choices', [])
-            question = Question.objects.create(quiz=quiz, **question_data)
+            question = Question.objects.create(quiz=quiz,
+                                               **question_data)
 
             for choice_data in choices_data:
-                Choice.objects.create(question=question, **choice_data)
+                Choice.objects.create(question=question,
+                                      **choice_data)
 
         return quiz
 
@@ -99,7 +113,8 @@ class QuizAttemptCreateSerializer(serializers.ModelSerializer):
 
             try:
                 question = Question.objects.get(id=answer['question'])
-                if not question.choices.filter(id=answer['selected_choice']).exists():
+                if not (question.choices.filter(id=answer['selected_choice'])
+                        .exists()):
                     raise serializers.ValidationError(
                         f"Invalid choice for question ID {answer['question']}."
                     )
