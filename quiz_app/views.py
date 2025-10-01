@@ -23,10 +23,13 @@ class QuizDetailView(RetrieveAPIView):
 
 class QuizAttemptListView(APIView):
     def get(self, request, quiz_id):
-        quiz_attempts = QuizAttempt.objects.filter(
-            quiz__id=quiz_id
-        ).select_related('quiz').prefetch_related(
-            'answers__question', 'answers__selected_choice'
+        quiz_attempts = (
+            QuizAttempt.objects.filter(quiz__id=quiz_id)
+            .select_related('quiz')
+            .prefetch_related(
+                'answers__question',
+                'answers__selected_choice'
+            )
         )
 
         if not quiz_attempts.exists():
@@ -35,7 +38,11 @@ class QuizAttemptListView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        serializer = QuizAttemptSerializer(quiz_attempts, many=True)
+        serializer = QuizAttemptSerializer(
+            quiz_attempts,
+            many=True
+        )
+
         return Response(serializer.data)
 
 
@@ -44,7 +51,12 @@ class QuizCreateView(APIView):
     renderer_classes = [JSONRenderer]
 
     def post(self, request, *args, **kwargs):
-        serializer = QuizCreateSerializer(data=request.data, context={'request': request})
+        serializer = (
+            QuizCreateSerializer(
+                data=request.data,
+                context={'request': request}
+            )
+        )
 
         if serializer.is_valid():
             quiz = serializer.save()
@@ -53,7 +65,10 @@ class QuizCreateView(APIView):
                 status=status.HTTP_201_CREATED
             )
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 class QuizAttemptCRUDView(APIView):
@@ -63,17 +78,25 @@ class QuizAttemptCRUDView(APIView):
         quiz_id = request.data.get("quiz")
 
         if not quiz_id:
-            return Response({"detail": "Quiz ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Quiz ID is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         try:
             quiz = Quiz.objects.get(id=quiz_id)
+
             if not quiz.is_active or not (quiz.start_time <= now() <= quiz.end_time):
                 return Response(
                     {"detail": "The quiz is not active or has expired."},
                     status=status.HTTP_400_BAD_REQUEST
                 )
+
         except Quiz.DoesNotExist:
-            return Response({"detail": "Quiz not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"detail": "Quiz not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
         if QuizAttempt.objects.filter(quiz=quiz, user=request.user).exists():
             return Response(
@@ -81,40 +104,74 @@ class QuizAttemptCRUDView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        serializer = QuizAttemptCreateSerializer(data=request.data, context={'request': request})
+        serializer = QuizAttemptCreateSerializer(
+            data=request.data,
+            context={'request': request}
+        )
 
         if serializer.is_valid():
-            quiz_attempt = serializer.save(user=request.user, quiz=quiz)
+            quiz_attempt = serializer.save(
+                user=request.user,
+                quiz=quiz
+            )
             return Response(
-                {"message": "Quiz attempt created successfully!", "quiz_attempt_id": quiz_attempt.id},
+                {
+                    "message": "Quiz attempt created successfully!",
+                    "quiz_attempt_id": quiz_attempt.id
+                },
                 status=status.HTTP_201_CREATED
             )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     def get(self, request, *args, **kwargs):
         attempt_id = kwargs.get('attempt_id')
         
         if not attempt_id:
-            return Response({"detail": "Attempt ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Attempt ID is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         try:
-            quiz_attempt = QuizAttempt.objects.select_related('quiz', 'user').prefetch_related('answers').get(
-                id=attempt_id, user=request.user
+            quiz_attempt = (
+                QuizAttempt.objects.select_related('quiz', 'user')
+                .prefetch_related('answers')
+                .get(
+                    id=attempt_id,
+                    user=request.user
+                )
             )
         except QuizAttempt.DoesNotExist:
-            return Response({"detail": "Quiz attempt not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"detail": "Quiz attempt not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
         serializer = QuizAttemptSerializer(quiz_attempt)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )
 
     def put(self, request, *args, **kwargs):
         attempt_id = kwargs.get('attempt_id')
         
         if not attempt_id:
-            return Response({"detail": "Attempt ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Attempt ID is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         try:
-            quiz_attempt = QuizAttempt.objects.get(id=attempt_id, user=request.user)
+            quiz_attempt = QuizAttempt.objects.get(
+                id=attempt_id,
+                user=request.user
+            )
         except QuizAttempt.DoesNotExist:
             return Response(
                 {"detail": "Quiz attempt not found or not authorized to update."},
@@ -122,26 +179,41 @@ class QuizAttemptCRUDView(APIView):
             )
 
         serializer = QuizAttemptCreateSerializer(
-            quiz_attempt, data=request.data, partial=True, context={'request': request}
+            quiz_attempt,
+            data=request.data,
+            partial=True,
+            context={'request': request}
         )
         
         if serializer.is_valid():
             quiz_attempt = serializer.save()
             return Response(
-                {"message": "Quiz attempt updated successfully!", "quiz_attempt_id": quiz_attempt.id},
+                {
+                    "message": "Quiz attempt updated successfully!",
+                    "quiz_attempt_id": quiz_attempt.id
+                },
                 status=status.HTTP_200_OK
             )
         
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     def delete(self, request, *args, **kwargs):
         attempt_id = kwargs.get('attempt_id')
         
         if not attempt_id:
-            return Response({"detail": "Attempt ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Attempt ID is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         try:
-            quiz_attempt = QuizAttempt.objects.get(id=attempt_id, user=request.user)
+            quiz_attempt = QuizAttempt.objects.get(
+                id=attempt_id,
+                user=request.user
+            )
         except QuizAttempt.DoesNotExist:
             return Response(
                 {"detail": "Quiz attempt not found or not authorized to delete."},
@@ -157,8 +229,16 @@ class QuizAttemptCRUDView(APIView):
 
 class LeaderboardView(APIView):
     def get(self, request, quiz_id):
-        quiz = get_object_or_404(Quiz, id=quiz_id)
-        attempts = QuizAttempt.objects.filter(quiz=quiz).order_by('-score')
+        quiz = get_object_or_404(
+            Quiz,
+            id=quiz_id
+        )
+
+        attempts = (
+            QuizAttempt.objects.filter(quiz=quiz)
+            .order_by('-score')
+        )
+
         leaderboard = [
             {
                 "username": attempt.user.username,
