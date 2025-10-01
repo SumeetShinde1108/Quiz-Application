@@ -1,17 +1,16 @@
 from pathlib import Path
 from datetime import timedelta
 
-SIMPLE_JWT= {
-    'ACCESS_TOKEN_LIFETIME':timedelta( minutes = 30 ),
-    'REFRESH_TOKEN_LIFETIME':timedelta ( days = 3 ),
-    'ROTATE_REFRESH_TOKEN': False ,
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=3),
+    'ROTATE_REFRESH_TOKEN': False,
 }
 
-APPEND_SLASH=False 
+APPEND_SLASH = False
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -40,7 +39,7 @@ INSTALLED_APPS = [
 ]
 
 GRAPHENE = {
-    "SCHEMA": "Quiz.schemas.schema",  
+    "SCHEMA": "Quiz.schemas.schema",
 }
 
 MIDDLEWARE = [
@@ -73,27 +72,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Quiz.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydb', 
-        'USER': 'db',  
-        'PASSWORD': 'db',  
-        'HOST': 'postgres',  
-        'PORT': '5432',  
+        'NAME': 'mydb',
+        'USER': 'db',
+        'PASSWORD': 'db',
+        'HOST': 'postgres',
+        'PORT': '5432',
     }
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [   
+AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
@@ -108,7 +104,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -120,7 +115,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
@@ -131,13 +125,11 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',  
+        'rest_framework.permissions.IsAuthenticated',
     ],
 }
-
